@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lecture 4 Quiz – Introduction to Computing Technology</title>
+<style>
+  :root{--bg:#f5f7fb;--card:#fff;--text:#1f2937;--muted:#6b7280;--primary:#2563eb;--ok:#16a34a;--okbg:#dcfce7;--bad:#dc2626;--badbg:#fee2e2;--border:#e5e7eb}
+  @media (prefers-color-scheme:dark){:root{--bg:#0f172a;--card:#1e293b;--text:#e5e7eb;--muted:#94a3b8;--primary:#60a5fa;--ok:#4ade80;--okbg:#14532d;--bad:#f87171;--badbg:#7f1d1d;--border:#334155}}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+  .wrap{max-width:760px;margin:0 auto;padding:16px}
+  h1{font-size:1.4rem;margin:8px 0 2px}
+  .sub{color:var(--muted);margin:0 0 14px;font-size:.95rem}
+  .bar{position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:5;border-bottom:1px solid var(--border)}
+  .stats{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:6px}
+  .track{height:8px;background:var(--border);border-radius:99px;overflow:hidden}
+  .fill{height:100%;width:0;background:var(--primary);transition:width .3s}
+  .q{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin:14px 0}
+  .q h3{margin:0 0 6px;font-size:1rem}
+  .num{color:var(--primary);font-weight:700;margin-right:6px}
+  .note{font-size:.85rem;color:var(--muted);font-style:italic;margin:0 0 8px}
+  .opt{display:block;width:100%;text-align:left;background:transparent;color:inherit;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:.95rem;cursor:pointer;font-family:inherit}
+  .opt:hover:not(:disabled){border-color:var(--primary)}
+  .opt b{display:inline-block;width:1.5em}
+  .opt.correct{background:var(--okbg);border-color:var(--ok)}
+  .opt.wrong{background:var(--badbg);border-color:var(--bad)}
+  .opt:disabled{cursor:default}
+  .exp{margin-top:8px;font-size:.85rem;color:var(--muted)}
+  .result{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;margin:14px 0;display:none}
+  .result .big{font-size:2rem;font-weight:700;color:var(--primary)}
+  button.main{background:var(--primary);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-size:.95rem;cursor:pointer;margin-top:10px;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Lecture 4 Quiz</h1>
+  <p class="sub">Introduction to Computing Technology – Midterm Revision (Input &amp; Output Devices) · 40 questions</p>
+
+  <div class="bar">
+    <div class="stats"><span id="progress">Answered: 0 / 40</span><span id="score">Score: 0</span></div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+  </div>
+
+  <div id="quiz"></div>
+
+  <div class="result" id="result">
+    <div class="big" id="final"></div>
+    <p id="msg"></p>
+    <button class="main" onclick="restart()">Try again</button>
+  </div>
+</div>
+
+<script>
+// answer = index of the correct option (0=a, 1=b, 2=c, 3=d)
+// note = optional text for questions that had a figure in the original file
+const Q = [
+ {q:"____ keys on a keyboard are used for issuing commands in some programs.",o:["Alphanumeric","Number","Arrow","Function"],a:3},
+ {q:"A(n) ____ keyboard folds or rolls up and connects to a device via a wired or wireless connection when needed.",o:["slide-out","portable","MIDI","on-screen"],a:1},
+ {q:"A ____ rests on the desk or other flat surface close to the user’s computer and is moved across the surface with the user’s hand in the appropriate direction to point to and select objects on the screen.",o:["touch screen","virtual keyboard","stylus","mouse"],a:3},
+ {q:"A(n) ____ is a flat, touch-sensitive device used in conjunction with a digital pen.",o:["graphics table","graphics tablet","image tablet","touch screen"],a:1},
+ {q:"With a ____, the user touches the screen with his or her finger to select commands or otherwise provide input to the computer with which it is being used.",o:["touch screen","graphics tablet","signature capture device","laser screen"],a:0},
+ {q:"____ uses a combination of multi-touch input from multiple users and object recognition to interact with computers that are typically built into tabletops and other surfaces.",o:["Tactile feedback","Surface computing","A digitizing tablet","Touch coding"],a:1},
+ {q:"A ____ is designed to scan flat objects one page at a time.",o:["sheetfed scanner","handheld scanner","flatbed scanner","C-Pen scanner"],a:2},
+ {q:"A ____ is an optical code that represents data with bars of varying widths or heights.",o:["digital code","character code","bar table","barcode"],a:3},
+ {q:"The accompanying figure shows a portable ____ reader.",note:"Figure: a handheld portable reader with a red scanning light (add the image here if you want).",o:["barcode","scanner","RFID","optimal mark"],a:0},
+ {q:"One of the most common 2D barcodes, the ____ code represents data with a matrix of small bars.",o:["ISBN","QR","Code 39","UPC"],a:1},
+ {q:"____ are used to input data about a person into a computer system so that the individual can be identified based on a particular unique physiological characteristic.",o:["Biometric readers","RFID tags","MICR readers","OMRs"],a:0},
+ {q:"Digital still cameras most often use ____ cards for storage.",o:["flash memory","RAM memory","ROM memory","laser memory"],a:0},
+ {q:"One factor affecting digital camera quality is the number of pixels, measured in ____, used to store the data for each image.",o:["kilopixels","megapixels","gigapixels","terapixels"],a:1},
+ {q:"The display device for a desktop computer is formally called a ____.",o:["touch screen","video reader","video input","monitor"],a:3},
+ {q:"The ____ used to be the norm for desktop computers.",o:["touch screen","flat-panel display","CRT monitor","LCD screen"],a:2},
+ {q:"Display devices can be ____ displays, in which each pixel can only be one of two colors, such as black or white.",o:["monochrome","bichrome","flat color","1D"],a:0},
+ {q:"A ____ is the smallest colorable area in an electronic image.",o:["bit","dot","dpi","pixel"],a:3},
+ {q:"A difference between CRT monitors and flat-panel displays is that most flat-panel displays use digital signals to display images, while CRT monitors use ____.",o:["radio signals","analog signals","laser signals","infrared signals"],a:1},
+ {q:"The number of bits used to store color information about each pixel is called ____.",o:["bit depth","color concentration","pixel depth","byte resolution"],a:0},
+ {q:"Wireless displays connect to a computer using a wireless networking connection such as Wi-Fi or ____.",o:["Bluetooth","3D","USB","VGA"],a:0},
+ {q:"A(n) ____ uses charged liquid crystals located between two sheets of clear material to light up the appropriate pixels to form the image on the screen.",o:["organic light emitting diode (OLED) display","gas plasma display","digital television (DTV)","liquid crystal display (LCD)"],a:3},
+ {q:"A(n) ____ connects to a computer, and any output that is sent to the computer monitor is also projected through it onto a wall or projection screen.",o:["data projector","SED","IMOD","scanner"],a:0,e:"Note: an SED monitor uses millions of tiny electron guns to power its pixels on a flat screen."},
+ {q:"The accompanying figure shows a(n) ____ printer.",note:"Figure: a printer with continuous-feed paper (add the image here if you want).",o:["dot-matrix","ink-jet","laser","thermal"],a:0},
+ {q:"In a printer, the number of ____ affects the quality of printed output.",o:["characters per inch (cpi)","dots per inch (dpi)","lines per inch (lpi)","characters per second (cps)"],a:1},
+ {q:"In a printer, the print ____ affects the quality of the printed output.",o:["depth","size","palette","resolution"],a:3},
+ {q:"Print speed is typically measured in ____.",o:["pages per minute (ppm)","dots per second (dps)","pixels per minute (ppm)","characters per second (cps)"],a:0},
+ {q:"____ are the standard for business documents and come in both personal and network styles.",o:["Laser printers","Ink-jet printers","Dot-matrix printers","Line printers"],a:0},
+ {q:"____ form images by spraying tiny drops of liquid ink onto the page, one printed line at a time.",o:["Laser printers","Ink-jet printers","Dot-matrix printers","Line printers"],a:1},
+ {q:"All the following devices are output devices except ____",o:["Touchpad","Touch Screen","Speaker","Monitor"],a:0},
+ {q:"The term used to define all input and output devices in a computer system is ____",o:["Monitor","Shared resources","Software","Hardware"],a:3},
+ {q:"Information that comes from an external source and is fed into computer software is called ____",o:["Throughput","Input","Output","Reports"],a:1},
+ {q:"The most common method of entering text and numerical data into a computer system is through the use of a ____",o:["Plotter","Printer","Scanner","Keyboard"],a:3},
+ {q:"Which of the following is not an output device?",o:["Plotter","Scanner","Printer","Monitor"],a:1},
+ {q:"Devices that let the computer communicate with you ____",o:["Input","Type","Output","Print"],a:2},
+ {q:"Devices that allow you to put information into the computer ____",o:["Input","Type","Output","Print"],a:0},
+ {q:"Which of the following is not an example of hardware?",o:["Scanner","Monitor","Printer","Firewall"],a:3},
+ {q:"Using output devices one can ____",o:["Input data","Scan data","Store data","View or print data"],a:3},
+ {q:"The wheel located between the two standard buttons on a mouse is used to ____",o:["Click on web pages","Click and select items","Shutdown","Scroll"],a:3},
+ {q:"What type of devices are mouse, trackball and light pen?",o:["Processing devices","Pointing devices","None of these","Output devices"],a:1},
+ {q:"New technology named 'LED' is abbreviation of ____",o:["Light emitting diodes","Liquid emitting displays","Less emitting diodes","Low emission displays"],a:0}
+];
+
+const L = ["a","b","c","d"];
+let answered = 0, score = 0;
+const quiz = document.getElementById("quiz");
+
+function build(){
+  quiz.innerHTML = "";
+  Q.forEach((item,i)=>{
+    const d = document.createElement("div");
+    d.className = "q";
+    d.innerHTML = `<h3><span class="num">${i+1}.</span>${item.q}</h3>` +
+      (item.note ? `<p class="note">${item.note}</p>` : "");
+    item.o.forEach((t,j)=>{
+      const b = document.createElement("button");
+      b.className = "opt";
+      b.innerHTML = `<b>${L[j]}.</b> ${t}`;
+      b.onclick = ()=>pick(d,item,j);
+      d.appendChild(b);
+    });
+    quiz.appendChild(d);
+  });
+}
+
+function pick(card,item,j){
+  const btns = card.querySelectorAll(".opt");
+  btns.forEach((b,k)=>{
+    b.disabled = true;
+    if(k===item.a) b.classList.add("correct");
+  });
+  if(j===item.a){ score++; } else { btns[j].classList.add("wrong"); }
+  if(item.e){
+    const p = document.createElement("div");
+    p.className = "exp"; p.textContent = item.e;
+    card.appendChild(p);
+  }
+  answered++;
+  update();
+  if(answered===Q.length) finish();
+}
+
+function update(){
+  document.getElementById("progress").textContent = `Answered: ${answered} / ${Q.length}`;
+  document.getElementById("score").textContent = `Score: ${score}`;
+  document.getElementById("fill").style.width = (answered/Q.length*100)+"%";
+}
+
+function finish(){
+  const r = document.getElementById("result");
+  const pct = Math.round(score/Q.length*100);
+  document.getElementById("final").textContent = `${score} / ${Q.length} (${pct}%)`;
+  document.getElementById("msg").textContent =
+    pct>=90 ? "Excellent! You're ready." :
+    pct>=70 ? "Good job – review the ones you missed." :
+    "Keep studying – go through the lecture again and retry.";
+  r.style.display = "block";
+  r.scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+function restart(){
+  answered = 0; score = 0;
+  document.getElementById("result").style.display = "none";
+  build(); update();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+build(); update();
+</script>
+</body>
+</html>
