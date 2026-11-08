@@ -1,0 +1,787 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>كويز Intro Computing</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Colorful redesign: gradient banner, per-lecture tab colors, playful cards. Markup and logic untouched. */
+:root {
+  --bg: #f4f1ff;
+  --surface: #ffffff;
+  --surface-2: #efeafd;
+  --fg: #231a45;
+  --muted: #6b6390;
+  --line: #ddd5f5;
+  --accent: #7a4dff;
+  --accent-ink: #ffffff;
+  --ok: #0f9d6b;
+  --ok-bg: #dcf7ea;
+  --bad: #e5484d;
+  --bad-bg: #ffe5e6;
+  --pick: #7a4dff;
+  --g1: #7a4dff; --g2: #e04fb5; --g3: #ff8a4c;
+  --shadow: 0 6px 20px rgba(98, 62, 200, .10);
+  --f-body: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #130f26; --surface: #1d1740; --surface-2: #2a2258; --fg: #f1ecff; --muted: #b3a9dd; --line: #3a3070;
+    --accent: #a98bff; --accent-ink: #130f26; --ok: #4fe0a6; --ok-bg: #0f3a2c; --bad: #ff8087; --bad-bg: #44202a; --pick: #a98bff;
+    --shadow: 0 6px 20px rgba(0, 0, 0, .35); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #130f26; --surface: #1d1740; --surface-2: #2a2258; --fg: #f1ecff; --muted: #b3a9dd; --line: #3a3070;
+  --accent: #a98bff; --accent-ink: #130f26; --ok: #4fe0a6; --ok-bg: #0f3a2c; --bad: #ff8087; --bad-bg: #44202a; --pick: #a98bff;
+  --shadow: 0 6px 20px rgba(0, 0, 0, .35); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background:
+    radial-gradient(600px 400px at 90% -5%, color-mix(in srgb, var(--g2) 22%, transparent), transparent 70%),
+    radial-gradient(600px 400px at 0% 10%, color-mix(in srgb, var(--g1) 22%, transparent), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--fg);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.7;
+  padding-block: 20px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+header {
+  position: relative; overflow: hidden; border-radius: 22px; padding: 24px 22px;
+  background: linear-gradient(135deg, var(--g1), var(--g2) 60%, var(--g3));
+  color: #fff; box-shadow: 0 10px 28px rgba(122, 77, 255, .35);
+}
+header::before, header::after { content: ""; position: absolute; border-radius: 50%; background: rgba(255,255,255,.16); }
+header::before { width: 160px; height: 160px; top: -60px; right: -40px; }
+header::after { width: 100px; height: 100px; bottom: -40px; left: 30%; background: rgba(255,255,255,.12); }
+header > * { position: relative; z-index: 1; }
+h1 { font-size: 1.7rem; line-height: 1.3; margin: 0; font-weight: 700; text-wrap: balance; }
+h1::before { content: "🎓 "; }
+.sub { margin: 6px 0 0; color: rgba(255,255,255,.92); font-size: 0.95rem; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+.tab {
+  --tc: #7a4dff;
+  flex: 1 1 140px; min-width: 0;
+  background: var(--surface); border: 2px solid var(--line); border-bottom: 4px solid var(--tc); border-radius: 14px;
+  padding: 10px 14px; text-align: start; display: flex; flex-direction: column; gap: 2px; box-shadow: var(--shadow);
+}
+.tab:nth-child(1) { --tc: #7a4dff; }
+.tab:nth-child(2) { --tc: #e04fb5; }
+.tab:nth-child(3) { --tc: #ff8a4c; }
+.tab:nth-child(4) { --tc: #14b8a6; }
+.tab:nth-child(5) { --tc: #3b82f6; }
+.tab:nth-child(6) { --tc: #f5b400; }
+.tab .t-name { font-weight: 600; }
+.tab .t-meta { font-size: 0.82rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tab:hover { border-color: var(--tc); }
+.tab[aria-selected="true"] { background: var(--tc); border-color: var(--tc); color: #fff; transform: translateY(-2px); }
+.tab[aria-selected="true"] .t-meta { color: #fff; opacity: 0.9; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow); }
+.score-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.score-big { font-size: 1.3rem; font-weight: 700; font-variant-numeric: tabular-nums; background: linear-gradient(90deg, var(--g1), var(--g2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.score-small { color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.bar { height: 12px; border-radius: 99px; background: var(--surface-2); overflow: hidden; display: flex; }
+.bar i { display: block; height: 100%; }
+.bar .b-ok { background: linear-gradient(90deg, #12b886, #4fe0a6); }
+.bar .b-bad { background: linear-gradient(90deg, #ff6b6b, #ff9a8b); }
+.note { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; font-size: 0.9rem; color: var(--muted); margin: 0; }
+.reset { align-self: flex-start; background: transparent; border: 1.5px solid var(--line); border-radius: 99px; padding: 6px 14px; font-size: 0.9rem; color: var(--muted); }
+.reset:hover { border-color: var(--accent); color: var(--accent); }
+.reset[data-armed="1"] { border-color: var(--bad); color: var(--bad); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); gap: 8px; }
+.chip {
+  height: 42px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface);
+  font-family: var(--f-mono); font-size: 0.85rem; font-variant-numeric: tabular-nums; display: flex; align-items: center; justify-content: center; gap: 2px;
+}
+.chip:hover { border-color: var(--accent); transform: translateY(-2px); }
+.chip.ok { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
+.chip.bad { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+.chip svg { width: 11px; height: 11px; }
+
+.list { display: flex; flex-direction: column; gap: 18px; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-inline-start: 6px solid var(--accent);
+  border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 12px; scroll-margin-top: 12px; box-shadow: var(--shadow);
+}
+.card:nth-child(4n+1) { border-inline-start-color: #7a4dff; }
+.card:nth-child(4n+2) { border-inline-start-color: #e04fb5; }
+.card:nth-child(4n+3) { border-inline-start-color: #ff8a4c; }
+.card:nth-child(4n+4) { border-inline-start-color: #14b8a6; }
+.q-head { display: flex; gap: 10px; align-items: flex-start; }
+.q-num { font-family: var(--f-mono); font-weight: 600; font-size: 0.85rem; color: #fff; background: linear-gradient(135deg, var(--g1), var(--g2)); border-radius: 99px; padding: 2px 11px; flex: none; margin-top: 3px; }
+.q-text { margin: 0; font-weight: 500; line-height: 1.55; min-width: 0; overflow-wrap: anywhere; text-align: left; flex: 1; }
+.q-note { margin: 0; font-size: 0.88rem; color: var(--muted); background: var(--surface-2); border-radius: 10px; padding: 8px 10px; }
+
+.opts { display: flex; flex-direction: column; gap: 9px; }
+.opt-wrap { display: flex; flex-direction: column; gap: 6px; }
+.opt {
+  width: 100%; display: flex; align-items: center; gap: 10px; text-align: left;
+  background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; min-height: 50px;
+}
+.opt:hover:not(:disabled) { border-color: var(--accent); background: var(--surface-2); transform: translateX(3px); }
+.opt:disabled { cursor: default; }
+.opt .let { font-family: var(--f-mono); font-weight: 600; font-size: 0.85rem; width: 28px; height: 28px; flex: none; border-radius: 99px; background: var(--surface-2); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+.opt:hover:not(:disabled) .let { background: var(--accent); color: var(--accent-ink); }
+.opt .txt { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.opt .ico { width: 22px; height: 22px; flex: none; display: none; }
+.opt.ok { background: var(--ok-bg); border-color: var(--ok); }
+.opt.ok .ico { display: block; color: var(--ok); }
+.opt.ok .let { background: var(--ok); color: #fff; }
+.opt.bad { background: var(--bad-bg); border-color: var(--bad); }
+.opt.bad .ico { display: block; color: var(--bad); }
+.opt.bad .let { background: var(--bad); color: #fff; }
+.opt.picked { box-shadow: 0 0 0 3px color-mix(in srgb, var(--pick) 45%, transparent); }
+.opt .you { font-size: 0.72rem; font-weight: 600; color: #fff; background: var(--pick); border-radius: 99px; padding: 0 9px; flex: none; }
+.why { margin: 0; padding: 9px 12px; font-size: 0.93rem; border-radius: 12px; border-inline-start: 4px solid var(--line); background: var(--surface-2); }
+.why.ok { border-inline-start-color: var(--ok); background: var(--ok-bg); }
+.why.bad { border-inline-start-color: var(--bad); background: var(--bad-bg); }
+.why b { font-weight: 700; }
+.verdict { margin: 0; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.verdict.ok { color: var(--ok); }
+.verdict.bad { color: var(--bad); }
+.verdict svg { width: 20px; height: 20px; }
+.credit { text-align: center; color: var(--muted); font-size: 0.9rem; padding-top: 20px; border-top: 1px dashed var(--line); margin-top: 8px; }
+.credit::after { content: " 💜"; }
+@media (max-width: 480px) {
+  h1 { font-size: 1.4rem; }
+  header { padding: 20px 16px; }
+  .card { padding: 14px 12px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .opt, .chip, .tab { transition: background-color .15s, border-color .15s, transform .15s, color .15s; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>كويز مراجعة Intro to Computing</h1>
+    <p class="sub">اختار إجابة وهتظهرلك علامة صح أو غلط جنب كل اختيار، مع تفسير ليه كل اختيار صح أو غلط.</p>
+  </header>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <section class="panel" id="panel"></section>
+  <div class="list" id="list"></div>
+  <footer class="credit">Made by Mostafa Ahmed</footer>
+</div>
+
+<script>
+const L1 = [
+["____________ process occurs when data is entered into the computer.", 2, [
+ ["Output", "الـ Output هو عرض النتائج للمستخدم (شاشة، طابعة، سماعة)، مش إدخال البيانات."],
+ ["Processing", "الـ Processing هو إجراء عمليات على البيانات بعد ما تدخل. هو بيحصل بعد الإدخال مش لحظة الإدخال نفسها."],
+ ["Input", "الملف بيعرّف الـ Input بإنه \"Entering data into the computer\"، ونفس كلمة entered اللي في السؤال."],
+ ["Storage", "الـ Storage هو حفظ البيانات أو البرامج أو النتائج لاستخدامها بعد كده."]
+]],
+["In addition to the four primary computer operations, today's computers typically also perform ____ functions.", 1, [
+ ["calculations", "الحسابات جزء من الـ Processing، يعني مش عملية أساسية مستقلة."],
+ ["communications", "العمليات الأساسية خمسة: Input وProcessing وOutput وStorage وCommunication. والـ Communication هي إرسال واستقبال البيانات (إنترنت، شبكة)."],
+ ["sorting", "الترتيب (sorting) برضو نوع من المعالجة (Processing)، فمش عملية أساسية جديدة."],
+ ["programming", "البرمجة شغل المبرمج، مش وظيفة بينفذها الكمبيوتر كعملية أساسية."]
+]],
+["When data is processed into a meaningful form, it becomes ____.", 0, [
+ ["information", "البيانات (data) لما تتعالج وتتحول لشكل له معنى بتبقى information."],
+ ["code", "الـ code هو كود البرنامج نفسه، مش ناتج معالجة البيانات."],
+ ["a program", "الـ program مجموعة تعليمات بتحدد مهام الكمبيوتر، مش بيانات اتعالجت."],
+ ["a database", "الـ database مكان بيخزن بيانات منظمة، مش اسم البيانات بعد المعالجة."]
+]],
+["The most common input devices today are the keyboard and ____.", 1, [
+ ["printer", "الطابعة output device، بتطلّع النتائج على ورق."],
+ ["mouse", "الـ keyboard والـ mouse أشهر input devices، بنستخدمهم عشان ندخل بيانات وأوامر."],
+ ["speaker", "السماعة output device، بتطلّع الصوت."],
+ ["monitor", "الشاشة output device، بتعرض النتائج."]
+]],
+["The term ____________ refers to the programs or instructions used to tell the computer hardware what to do.", 2, [
+ ["hardware", "الـ hardware هو الأجزاء الفيزيائية للكمبيوتر، عكس البرامج."],
+ ["port", "الـ port مدخل بيتوصل فيه جهاز بالكمبيوتر."],
+ ["software", "الـ software هو الـ programs والتعليمات اللي بتقول للـ hardware يعمل إيه."],
+ ["adapter", "الـ adapter قطعة hardware بتوصّل أو بتحوّل بين أجهزة."]
+]],
+["Programming languages come in many varieties—for example, BASIC, Visual Basic, Pascal, COBOL, C++, and ___________.", 3, [
+ ["TCP/IP", "ده بروتوكول اتصال في الشبكات، مش لغة برمجة."],
+ ["Rextore", "كلمة مالهاش وجود كلغة برمجة، وهي اختيار مشتت."],
+ ["PDF", "صيغة ملفات للمستندات، مش لغة برمجة."],
+ ["Java", "Java لغة برمجة زيها زي BASIC وPascal وCOBOL وC++."]
+]],
+["Anyone who uses a computer is a(n) ____, including an accountant electronically preparing a client's taxes.", 3, [
+ ["computer programmer", "المبرمج هو اللي بيكتب البرامج، لكن المحاسب بيستخدم الكمبيوتر بس."],
+ ["application user", "مش المصطلح العام المطلوب. السؤال بيسأل عن أي حد بيستخدم الكمبيوتر."],
+ ["Web user", "ده يخص مستخدم الإنترنت بس، والمحاسب ممكن يشتغل على الكمبيوتر من غير الويب."],
+ ["computer user", "أي حد بيستخدم كمبيوتر هو computer user، حتى لو محاسب بيجهز ضرايب."]
+]],
+["A _________ is loosely defined as a very small device that has some built-in computing or Internet capability.", 2, [
+ ["mainframe computer", "الـ mainframe كمبيوتر ضخم وقوي بتستخدمه مؤسسات كبيرة، عكس الجهاز الصغير جداً."],
+ ["midrange server", "كمبيوتر متوسط الحجم بيستضيف برامج وبيانات لشبكة صغيرة."],
+ ["mobile device", "جهاز صغير جداً فيه قدرة حوسبة أو إنترنت مدمجة (زي الموبايل)."],
+ ["personal computer", "الـ PC مصمم لشخص واحد وحجمه أكبر، والسؤال بيوصف جهاز صغير جداً."]
+]],
+["A personal computer (PC) or ______ is a small computer system designed to be used by one person at a time.", 1, [
+ ["processor", "الـ processor هو المعالج (CPU)، جزء من الكمبيوتر مش الكمبيوتر كله."],
+ ["microcomputer", "الـ PC اسمه التاني microcomputer."],
+ ["microchip", "الـ microchip شريحة صغيرة، مش جهاز كامل."],
+ ["small processor", "مش مصطلح معروف."]
+]],
+["Conventional PCs are often referred to as __________ because the complete computer system fits on or next to a desk.", 0, [
+ ["desktop PCs", "بتتحط على المكتب أو جنبه، وغير مصممة إنها تتنقل."],
+ ["laptop PCs", "اللاب توب مصمم إنه يتحمل ويتنقل، مش بيتثبت على المكتب."],
+ ["super PCs", "مفيش نوع PCs بالاسم ده. الـ supercomputers حاجة تانية خالص."],
+ ["processor PCs", "مش مصطلح موجود."]
+]],
+["The accompanying figure (a desktop PC where the screen and the system unit are one piece) corresponds to the ____ style for desktop PCs.", 0, [
+ ["all-in-one case", "الشاشة والجهاز في قطعة واحدة، زي الصورة اللي في الملف."],
+ ["tower case", "الـ tower جهاز طويل منفصل عن الشاشة."],
+ ["desktop case", "جهاز عريض منفصل عن الشاشة بيتحط على المكتب."],
+ ["sub case", "مش مصطلح موجود."]
+]],
+["Most notebooks follow the traditional ____ design in which the monitor is on the inside top half of the PC, and the keyboard and touch pad are on the inside bottom half.", 0, [
+ ["clamshell", "الـ clamshell (الصدفة) بتتفتح وتتقفل، الشاشة فوق والكيبورد تحت. الملف بيقول: Notebook computers typically use clamshell design."],
+ ["Microsoft", "اسم شركة، مش تصميم."],
+ ["IBM", "اسم شركة، مش تصميم."],
+ ["book", "مش مصطلح مستخدم لتصميم النوتبوك في الملف."]
+]],
+["Ultra-mobile PCs are also called ____________.", 1, [
+ ["mini computers", "مش الاسم اللي بيستخدمه الملف للـ UMPCs."],
+ ["handheld computers", "الملف بيقول: Ultra-mobile PCs (UMPCs): Handheld computers."],
+ ["range computers", "مش مصطلح موجود."],
+ ["frame computers", "مش مصطلح موجود."]
+]],
+["A(n) ____ is a medium-sized computer used to host programs and data for a small network.", 2, [
+ ["mainframe computer", "أقوى وأكبر من الـ midrange، وبتستخدمه مؤسسات كبيرة لإدارة بيانات ضخمة."],
+ ["super server", "مش مصطلح في الملف."],
+ ["midrange server", "كمبيوتر متوسط الحجم بيستضيف برامج وبيانات لشبكة صغيرة."],
+ ["Internet server", "مش التعريف المطلوب."]
+]],
+["A ____ is a collection of hardware and other devices that are connected together so that users can share hardware, software, and data, as well as electronically communicate with each other.", 3, [
+ ["computer bank", "مش مصطلح."],
+ ["database", "الـ database بيانات منظمة، مش أجهزة متوصلة ببعض."],
+ ["data bank", "مش مصطلح."],
+ ["computer network", "أجهزة متوصلة ببعض عشان تشارك الـ hardware والـ software والبيانات وتتواصل."]
+]],
+["____ are unique numerical or text-based addresses used to identify resources accessible through the Internet, such as computers, Web pages, and people.", 3, [
+ ["Computer addresses", "ضيق شوية، والسؤال بيشمل كمان صفحات الويب والأشخاص."],
+ ["Machine IDs", "مش المصطلح المستخدم."],
+ ["Domain IDs", "مش المصطلح المستخدم."],
+ ["Internet addresses", "عناوين فريدة (أرقام أو نص) بتحدد الموارد على الإنترنت: كمبيوترات وصفحات وأشخاص."]
+]],
+["Similar to the way an IP address or domain name uniquely identifies a computer on the Internet, a ____ uniquely identifies a Web page.", 2, [
+ ["universal resource identifier (URI)", "الاسم مكتوب غلط، والمصطلح المعروف لعنوان صفحة الويب هو URL."],
+ ["Web ID (WID)", "مش مصطلح."],
+ ["uniform resource locator (URL)", "الـ URL بيحدد صفحة الويب بالظبط."],
+ ["Web resource identifier (WRI)", "مش مصطلح."]
+]],
+["To contact people using the Internet, you most often use their ____.", 1, [
+ ["domain names", "الـ domain name بيحدد موقع أو جهاز، مش شخص."],
+ ["e-mail addresses", "بنتواصل مع الناس على الإنترنت غالباً عن طريق الـ e-mail address."],
+ ["usernames", "بتستخدم لتسجيل الدخول مش للتواصل."],
+ ["passwords", "سرية ومبتتشاركش مع حد."]
+]],
+["To navigate to a new Web page for which you know the URL, type that URL in the browser's ____ and press Enter.", 0, [
+ ["Address bar", "الـ Address bar هو الشريط اللي فوق في المتصفح وبنكتب فيه الـ URL."],
+ ["Domain bar", "مش موجود في المتصفح."],
+ ["Address button", "مفيش زرار بالاسم ده بنكتب فيه."],
+ ["Name button", "مفيش زرار بالاسم ده."]
+]],
+["There are a number of special Web pages, called ____, available to help you locate what you are looking for on the Internet.", 0, [
+ ["search sites", "الـ search sites (محركات البحث) صفحات متخصصة بتساعدك تلاقي اللي بتدور عليه."],
+ ["domain identifications", "مش مصطلح."],
+ ["domain sites", "مش مصطلح."],
+ ["Internet repositories", "مش المصطلح المستخدم."]
+]],
+["____ are illustrations of faces showing smiles, frowns, and other expressions that are created with keyboard symbols.", 2, [
+ ["Spams", "رسائل مزعجة غير مرغوب فيها."],
+ ["Phishes", "محاولات احتيال لسرقة بيانات المستخدم."],
+ ["Emoticons", "وجوه بتعبر عن مشاعر بتتعمل برموز الكيبورد، زي :)"],
+ ["Trojan horses", "برامج ضارة متنكرة في شكل برامج عادية."]
+]],
+["All computer systems have input, processes, output and _________________.", 3, [
+ ["Feedback", "مش من العمليات الأساسية في الملف."],
+ ["Information", "ده ناتج المعالجة، مش عملية."],
+ ["Data", "الداتا هي اللي بتتعالج، مش عملية."],
+ ["Storage", "الـ Storage هي العملية الرابعة: حفظ البيانات والبرامج والنتائج."]
+]]
+];
+const L2 = [
+["Eight bits grouped together are collectively referred to as a ____.", 1, [
+ ["kilobit", "الـ kilobit حوالي ألف bit، مش 8."],
+ ["byte", "الملف بيقول: Byte = 8 bits."],
+ ["pixel", "الـ pixel نقطة واحدة في الصورة، مالوش علاقة بتجميع الـ bits."],
+ ["binary", "الـ binary نظام أرقام (0 و1)، مش وحدة قياس."]
+]],
+["The numbering system we commonly use is called the decimal numbering system because it uses ____ symbols to represent all possible numbers.", 2, [
+ ["2", "ده الـ binary numbering system (الرمزين 0 و1)."],
+ ["5", "مش عدد رموز أي نظام معروف في الملف."],
+ ["10", "الـ decimal بيستخدم 10 رموز (من 0 لـ 9)، وكلمة deci معناها عشرة."],
+ ["16", "ده نظام الـ hexadecimal، مش الـ decimal."]
+], "في ملف الـ PDF الاختيار C ظاهر 1018. ده في الأصل الرقم 10، ورقم الصفحة (18) اتلزق فيه."],
+["A ____ is the smallest unit of data that a binary computer can recognize.", 3, [
+ ["byte", "الـ byte = 8 bits، يعني أكبر من الـ bit."],
+ ["datum", "كلمة عامة معناها معلومة واحدة، مش وحدة قياس."],
+ ["pixel", "نقطة في الصورة، مش وحدة بيانات."],
+ ["bit", "الملف بيقول: Bit: The smallest unit of data that a binary computer can recognize (a single 1 or 0)."]
+]],
+["A ____ is equal to 1,024 bytes.", 0, [
+ ["kilobyte (KB)", "الـ KB = 1,024 bytes."],
+ ["megabyte (MB)", "الـ MB = 1,024 KB، يعني أكتر بكتير."],
+ ["gigabyte (GB)", "الـ GB = 1,024 MB."],
+ ["terabyte (TB)", "الـ TB = 1,024 GB."]
+]],
+["Each place value in a binary number represents ____ taken to the appropriate power.", 2, [
+ ["0", "الصفر أساس مش منطقي هنا."],
+ ["1", "أي رقم 1 أُس أي قوة بيساوي 1، فمش هيفرّق بين الخانات."],
+ ["2", "الـ binary بيستخدم رمزين، فكل خانة = 2 أُس مكانها (1 ثم 2 ثم 4 ثم 8...)."],
+ ["10", "ده أساس الـ decimal مش الـ binary."]
+]],
+["A(n) ________ instruction might look like a meaningless string of 0s and 1s, but it actually represents specific operations and storage locations.", 3, [
+ ["COBOL language", "لغة برمجة مكتوبة بكلمات إنجليزية مفهومة، مش سلسلة 0 و1."],
+ ["ASCII", "نظام ترميز بيحوّل الحروف لأرقام، مش تعليمات تنفيذ."],
+ ["programming language", "مصطلح عام، ومعظم اللغات مكتوبة بكلمات مش بأصفار وآحاد."],
+ ["machine language", "لغة الآلة تعليمات بتبان كأصفار وآحاد، لكنها بتمثل عمليات وأماكن تخزين."]
+]],
+["_______ are very small pieces of silicon or other semiconducting material onto which integrated circuits are embedded.", 2, [
+ ["Pixels", "نقاط الصورة على الشاشة."],
+ ["Pentiums", "اسم معالج من Intel، مش اسم المادة."],
+ ["Chips", "الملف بيقول: Computer chip: a very small piece of silicon or other semi-conducting material onto which integrated circuits are embedded."],
+ ["Motherboards", "اللوحة الرئيسية اللي الـ chips بتتركب عليها، مش القطعة الصغيرة نفسها."]
+]],
+["One measurement of the speed of a CPU is the ________, which is rated in megahertz (MHz) or gigahertz (GHz).", 1, [
+ ["system speed", "مش المصطلح المستخدم."],
+ ["CPU clock speed", "الملف بيقول: CPU clock speed بيتقاس بـ MHz أو GHz."],
+ ["system rpm", "الـ rpm بيقيس لفات الهارد دسك في الدقيقة."],
+ ["CPU rpm", "مش مصطلح."]
+]],
+["A computer ____ is the amount of data (measured in bits or bytes) that a CPU can manipulate at one time.", 0, [
+ ["word", "الـ word size هو كمية البيانات اللي الـ CPU يتعامل معاها مرة واحدة (32 أو 64 bit)."],
+ ["character", "حرف واحد بس."],
+ ["statement", "سطر في برنامج."],
+ ["unit", "كلمة عامة مش مصطلح."]
+]],
+["A ____ is an electronic path over which data can travel.", 0, [
+ ["bus", "الملف بيقول: Bus: An electronic path over which data can travel."],
+ ["lane", "كلمة عادية، مش مصطلح في الموضوع."],
+ ["word", "كمية بيانات يعالجها الـ CPU مش مسار."],
+ ["cache memory", "ذاكرة سريعة جنب الـ CPU، مش مسار."]
+]],
+["The bus width and bus speed together determine the bus's ____ or bandwidth; that is, the amount of data that can be transferred via the bus in a given period of time.", 1, [
+ ["clock speed", "سرعة نبضات الـ CPU أو النظام، مش كمية البيانات المنقولة."],
+ ["throughput", "الملف بيقول: Throughput: amount of data that can be transferred by the bus in a given time period, determined by bus width and speed."],
+ ["machine cycle", "مراحل تنفيذ تعليمة (fetch, decode, execute, store)."],
+ ["memory", "تخزين مؤقت، مش قياس لأداء الـ bus."]
+]],
+["The term ____ refers to chip-based storage used by the computer.", 1, [
+ ["storage media", "وسائط التخزين طويلة المدى (أقراص، فلاشات)، مش المقصود هنا."],
+ ["memory", "الملف بيقول: Memory refers to chip based storage that stores short term data."],
+ ["hard drive", "جهاز تخزين مغناطيسي بأقراص مش chips."],
+ ["Zip drive", "جهاز تخزين قديم بأقراص مغناطيسية قابلة للنقل."]
+]],
+["____ consists of nonvolatile memory chips that can be used for storage by the computer or the user.", 3, [
+ ["RAM", "الـ RAM volatile، بيضيع محتواها لما الجهاز يتقفل."],
+ ["Register", "ذاكرة سريعة جوه الـ CPU بيستخدمها الـ CPU، مش للتخزين بتاع المستخدم."],
+ ["SDRAM", "نوع من الـ RAM، يعني volatile برضو."],
+ ["Flash memory", "نوع من الـ nonvolatile memory ممكن يتمسح ويتبرمج تاني، وبيستخدمه الكمبيوتر والمستخدم."]
+]],
+["____ have begun to replace ROM for storing system information, such as a PC's BIOS.", 3, [
+ ["Motherboards", "اللوحة الرئيسية اللي الـ ROM متركب عليها، مش اللي بتحل محلها."],
+ ["Microprocessors", "المعالجات، وظيفتها المعالجة مش تخزين معلومات النظام."],
+ ["Adapter cards", "كروت توسعة بتضيف قدرات للجهاز."],
+ ["Flash memory chips", "بتتخزن فيها معلومات النظام زي BIOS لأنها nonvolatile وقابلة للتحديث."]
+]],
+["The ____ enables up to 127 devices to be connected to a computer's PCI bus through a single port on the computer's system unit.", 1, [
+ ["Hyper Transport bus", "ناقل سريع داخل الجهاز، مش بيوصّل 127 جهاز خارجي من بورت واحد."],
+ ["USB standard", "معيار الـ USB بيسمح بتوصيل لحد 127 جهاز من خلال بورت واحد."],
+ ["AGP (Accelerated Graphics Port) bus", "مخصص للكروت الرسومية."],
+ ["PCI Express Bus", "ناقل داخلي سريع لكروت التوسعة، مش بورت بيوصل 127 جهاز."]
+]],
+["A USB ____ is a device that plugs into your PC's USB port to convert one port into several USB ports.", 0, [
+ ["hub", "الـ hub بيحول بورت USB واحد لعدة بورتات."],
+ ["module", "زي memory module، وهي قطعة ذاكرة مش موزع بورتات."],
+ ["bus", "مسار بيانات، مش جهاز بيتوصل في البورت."],
+ ["connector", "وصلة، مش بتضاعف عدد البورتات."]
+]],
+["Most computers today support the ____ standard, in which the computer automatically configures new devices as soon as they are installed and the PC is powered up.", 0, [
+ ["Plug and Play", "الكمبيوتر بيتعرف على الجهاز الجديد ويضبطه أوتوماتيك أول ما تركبه وتشغل الجهاز."],
+ ["Match", "مش معيار معروف."],
+ ["Serial port", "بورت بيبعت البيانات bit ورا bit، مش معيار ضبط تلقائي."],
+ ["Parallel port", "بورت بيبعت أكتر من bit مع بعض، مش معيار ضبط تلقائي."]
+]],
+["The key element of the microprocessor is the _______ a device made of semiconductor material that acts like a switch controlling the flow of electrons inside a chip.", 1, [
+ ["processor", "الـ processor هو المعالج نفسه، والـ transistor هو العنصر الأساسي اللي جواه."],
+ ["transistor", "الملف بيقول: Transistor: key element of the microprocessor، مفتاح بيتحكم في سريان الإلكترونات."],
+ ["chipbus", "مش مصطلح."],
+ ["S-card", "مش مصطلح."]
+]],
+["The ____ takes instructions from the prefetch unit and translates them into a form that the control unit can understand.", 1, [
+ ["register", "بتحتفظ بنتائج المعالجة."],
+ ["decode unit", "الملف بيقول: Decode Unit: translates instructions from the Pre-fetch unit so they are understood by the control unit, ALU, and FPU."],
+ ["ALU", "بينفذ العمليات الحسابية والمنطقية."],
+ ["internal cache", "بيخزن بيانات قبل المعالجة وأثناءها."]
+]],
+["The ____ is the section of the CPU that performs arithmetic involving integers and logical operations.", 3, [
+ ["FPU", "الـ FPU بيعمل الحسابات العشرية (decimal)، مش الأعداد الصحيحة."],
+ ["control unit", "بينسّق ويتحكم في الأنشطة جوه الـ core، ومش بيحسب."],
+ ["decode unit", "بيترجم التعليمات لشكل مفهوم."],
+ ["ALU", "الملف بيقول: ALU performs arithmetic involving integers and logical operations."]
+]],
+["The ____ orders data and instructions from cache or RAM based on the task at hand.", 1, [
+ ["ALU", "بينفذ العمليات الحسابية والمنطقية مش بيطلب بيانات."],
+ ["prefetch unit", "في الصورة: بيطلب التعليمات والبيانات من الـ cache أو الـ RAM ويرتبها للمعالجة."],
+ ["control unit", "بينسّق العملية كلها ويوجّه الـ ALU والـ FPU والـ registers."],
+ ["decode unit", "بيترجم التعليمات بس."]
+]],
+["The ____ tries to predict what data and instructions will be needed and retrieves them ahead of time, in order to help avoid delays in processing.", 3, [
+ ["control unit", "بينسّق الأنشطة جوه الـ core."],
+ ["floating point unit", "بيعمل حسابات عشرية."],
+ ["arithmetic/logic unit", "بيعمل حسابات صحيحة وعمليات منطقية."],
+ ["prefetch unit", "الملف بيقول: Prefetch Unit attempts to retrieve data and instructions before they are needed in order to avoid delays."]
+]],
+["Instructions and data flow in and out of the CPU via the ____.", 3, [
+ ["control unit", "بينسق ويتحكم مش بوابة دخول وخروج."],
+ ["prefetch unit", "بيجيب التعليمات مقدماً."],
+ ["decode unit", "بيترجم التعليمات."],
+ ["bus interface unit", "الملف بيقول: Bus Interface Unit: the place where data and instructions enter or leave the core."]
+]],
+["In order to synchronize all of a computer's operations, a _______ quartz crystal located on the motherboard—is used.", 2, [
+ ["cycle chip", "مش مصطلح."],
+ ["fetch unit", "مش مصطلح، والـ fetch مرحلة من الـ machine cycle."],
+ ["system clock", "الملف بيقول: System clock: timing mechanism that synchronizes the computer's operations."],
+ ["microprocessor", "المعالج بيستقبل نبضات الساعة، لكنه مش اللي بيزامن."]
+]]
+];
+const L3 = [
+["A ____ is the hardware where data is actually stored.", 3, [
+ ["storage device", "الجهاز (الدرايف) هو اللي بيقرأ ويكتب على الوسيط، مش اللي البيانات متخزنة عليه فعلاً."],
+ ["storage memory", "مش مصطلح، والـ memory بتخزن بيانات مؤقتة."],
+ ["storage processor", "مش مصطلح."],
+ ["storage medium", "الوسيط (قرص أو CD أو فلاشة) هو الـ hardware اللي البيانات بتتخزن عليه فعلاً."]
+]],
+["A storage medium is inserted into the appropriate ____ to be read from or written to.", 3, [
+ ["storage processor", "مش مصطلح."],
+ ["bay", "الـ bay هو المكان اللي بيتركب فيه الدرايف جوه الجهاز، مش اللي بيقرأ ويكتب."],
+ ["board", "لوحة إلكترونية، مش بتقرأ الوسيط."],
+ ["storage device", "الملف بيقول: Medium is inserted into device to be used."]
+]],
+["Usually the storage device and storage medium are two separate pieces of hardware (that is, the storage medium is ________________).", 2, [
+ ["procurable", "معناها ممكن تتجاب أو تتشترى، مش المقصود."],
+ ["static", "ثابت، وده عكس المعنى."],
+ ["removable", "الوسيط بيتفصل ويتحط في الدرايف، يعني قابل للإزالة."],
+ ["configurable", "قابل للضبط، مش المقصود هنا."]
+]],
+["Regardless of how storage devices are connected to a computer, ____ and/or names are typically assigned to each storage device.", 0, [
+ ["letters of the alphabet", "الملف بيقول: Storage devices are typically identified by letter (زي C: وD:)."],
+ ["vowels", "حروف العلة بس؟ مفيش قاعدة زي دي."],
+ ["single-digit numbers", "مش طريقة تسمية الدرايفات."],
+ ["special characters", "مش طريقة تسمية الدرايفات."]
+]],
+["Some drive letters, such as the letter ____ typically used with the primary hard drive, are usually consistent from computer to computer and do not change even if more storage devices are added to a computer.", 2, [
+ ["A", "الحرف A كان للفلوبي ديسك القديم."],
+ ["B", "الحرف B كان للفلوبي التاني."],
+ ["C", "الحرف C بيتحط للـ primary hard drive، وبيفضل ثابت."],
+ ["H", "بيتغير حسب الأجهزة اللي بتتوصل."]
+]],
+["____ means that data can be retrieved directly from any location on the storage medium, in any order.", 1, [
+ ["Indirect access", "مش مصطلح."],
+ ["Random access", "تقدر توصل لأي مكان على الوسيط مباشرة وبأي ترتيب."],
+ ["Sequential access", "بتقرأ البيانات بالترتيب من الأول، زي شريط الكاسيت."],
+ ["Online access", "مش اسم نوع الوصول للبيانات في التخزين."]
+]],
+["One type of storage device that is sometimes used with computers and that uses sequential access is a ________________.", 3, [
+ ["hard drive", "الـ hard drive بيستخدم random access."],
+ ["flash drive", "الـ flash بيستخدم random access."],
+ ["compact card", "كارت ذاكرة، random access."],
+ ["magnetic tape drive", "الملف بيقول: Magnetic tape systems: sequential access only."]
+]],
+["Anything (such as a program, letter, digital photograph, or song) stored on a storage medium is referred to as a(n) ____.", 3, [
+ ["label", "اسم أو ملصق للوسيط."],
+ ["index", "فهرس لمحتوى."],
+ ["folder", "الـ folder بيجمع ملفات، هو مش الحاجة المخزنة نفسها."],
+ ["file", "أي حاجة متخزنة على وسيط تخزين (برنامج، صورة، أغنية) اسمها file."]
+]],
+["To keep files organized, related documents are often stored in ____ (also called directories) located on the storage medium.", 2, [
+ ["indexes", "مش اسم الـ directories."],
+ ["labels", "مش اسم الـ directories."],
+ ["folders", "الـ folders هي الـ directories اللي بتنظم الملفات المرتبطة."],
+ ["programs", "البرامج نوع من الملفات، مش مكان بيجمعها."]
+]],
+["Data files are also often called ______________.", 1, [
+ ["scripts", "ملفات بتحتوي كود أوامر، مش ملفات بيانات."],
+ ["documents", "الـ data files بتتسمى documents."],
+ ["databases", "قواعد بيانات منظمة، أخص من الـ data files."],
+ ["sheets", "نوع واحد بس من الملفات."]
+]],
+["The line in the accompanying figure (a folder tree like Documents > Budgets > 2010, 2011, Memos) points to ____, which are used to organize related documents.", 2, [
+ ["files", "الملفات بتتحط جوه الـ folders."],
+ ["drives", "الـ drives أعلى مستوى، زي C: وD:."],
+ ["folders", "الصورة شجرة فولدرات (Documents, Budgets, Memos) بتنظم الملفات المرتبطة."],
+ ["clipboards", "مكان نسخ مؤقت، مش بينظم الملفات."]
+]],
+["Virtually all personal computers come with a(n) ____ that is used to store most programs and data.", 0, [
+ ["hard drive", "الملف بيقول: Hard drives are used to store most programs and data."],
+ ["floppy drive", "قديم وسعته صغيرة وتقريباً اختفى."],
+ ["Zip drive", "جهاز قديم اختياري مش موجود في كل PC."],
+ ["external drive", "اختياري بيتوصل من برة، مش بييجي مع كل PC."]
+]],
+["Each hard disk is divided into pie-shaped groups of ____.", 3, [
+ ["tracks", "دوائر متحدة المركز على القرص مش شرايح بيتزا."],
+ ["clusters", "الـ cluster هو sector أو أكتر مع بعض، أصغر مساحة تخزين."],
+ ["files", "الملفات بتتخزن على القرص، مش تقسيم فيزيائي له."],
+ ["sectors", "الملف بيقول: Each disk is divided into pie-shaped groups of sectors."]
+]],
+["A ____, as shown in the accompanying figure, consists of a vertical stack of tracks, with the same relative track on each disk surface.", 2, [
+ ["sector", "شريحة بيتزا من القرص."],
+ ["segment", "مش مصطلح."],
+ ["cylinder", "الملف بيقول: A cylinder consists of a vertical stack of tracks, the same relative track on each disk surface."],
+ ["section", "مش مصطلح."]
+]],
+["A strategy for speeding up hard drive performance is ____.", 0, [
+ ["disk caching", "الـ disk cache جزء من الـ RAM بيخزن بيانات جنب اللي اتقرت، فبيسرّع الأداء."],
+ ["disk tracking", "مش استراتيجية تسريع."],
+ ["disk backing up", "النسخ الاحتياطي حماية للبيانات مش تسريع."],
+ ["disk wiring", "مش استراتيجية تسريع."]
+]],
+["A ___________ is a place to store something temporarily.", 1, [
+ ["sector", "جزء من القرص."],
+ ["cache", "الـ cache مكان سريع لتخزين حاجة مؤقتاً."],
+ ["track", "دايرة على القرص."],
+ ["tape", "وسيط تخزين طويل المدى."]
+]],
+["The time required to move the read/write heads to the cylinder that contains (or will contain) the desired data is called the __________________.", 3, [
+ ["initial time", "مش مصطلح."],
+ ["rotational delay", "الوقت اللي القرص بياخده يلف لحد ما الـ sector يوصل تحت الـ head."],
+ ["data movement time", "الوقت اللي بتتنقل فيه البيانات فعلاً."],
+ ["seek time", "وقت تحريك الـ read/write heads للـ cylinder، وهو جزء من الـ disk access time."]
+]],
+["A _______ partition contains the data necessary to restore a hard drive back to its state at the time the computer was purchased and is designed to be used only if the computer malfunctions.", 2, [
+ ["troubleshooting", "مش نوع partition."],
+ ["malfunction", "مش نوع partition."],
+ ["recovery", "الملف بيقول من استخدامات الـ partitions: Create a recovery partition."],
+ ["dual-boot", "بيستخدم لتشغيل نظامين على جهاز واحد."]
+]],
+["Partitions are sometimes referred to as ____.", 2, [
+ ["logical floppies", "مش مصطلح."],
+ ["cylinder drives", "مش مصطلح."],
+ ["logical drives", "الملف بيقول: Partitions function as independent hard drives, referred to as logical drives."],
+ ["partition sectors", "مش مصطلح."]
+]],
+["The recommended file system for computers running current versions of Windows is ____.", 2, [
+ ["FAT", "نظام قديم بحدود صغيرة."],
+ ["FAT32", "أحدث من FAT لكن حدوده أقل من NTFS."],
+ ["NTFS", "الـ NTFS هو الموصى به لويندوز الحديث."],
+ ["FAT64", "مش النظام الموصى به."]
+]],
+["Conventional CD discs use ___________ lasers.", 1, [
+ ["red", "الليزر الأحمر بيستخدمه الـ DVD."],
+ ["infrared", "الملف بيقول: CD discs use infrared lasers, hold 650 MB."],
+ ["blue", "الـ BD بيستخدم ليزر blue-violet."],
+ ["violet", "الـ BD بيستخدم ليزر blue-violet مش violet بس."]
+]],
+["CD-ROM discs and DVD-ROM discs are __________ optical discs and come prerecorded with commercial products.", 3, [
+ ["recordable", "ده نوع R (زي CD-R) بتقدر تكتب عليه مرة."],
+ ["rewritable", "ده نوع RW بتقدر تمسح وتكتب عليه."],
+ ["write-only", "مش مصطلح."],
+ ["read-only", "الـ ROM = Read-only: بتتقرأ بس، والبيانات بتتطبع عليها في المصنع."]
+]],
+["__________ optical discs can be recorded on, erased, and overwritten just like magnetic disks.", 2, [
+ ["Erasable", "مش المصطلح المستخدم في الملف."],
+ ["Rereadable", "مش مصطلح."],
+ ["Rewritable", "الملف بيقول: Rewritable Discs-RW can be recorded on, erased, and overwritten."],
+ ["Recordable", "الـ Recordable بتتكتب عليه مرة واحدة ومبيتمسحش."]
+]],
+["Some types of storage systems include remote storage, smart cards, and ____ storage.", 3, [
+ ["Wi-Fi", "تقنية اتصال لاسلكي، مش نوع تخزين."],
+ ["satellite", "مش نوع تخزين في الموضوع."],
+ ["artificial intelligence", "مجال مختلف."],
+ ["holographic", "الـ holographic storage نوع تخزين ثلاثي الأبعاد."]
+]],
+["One technology for 3D storage systems that, after many years of research and development, is now a reality is ___________.", 1, [
+ ["lithographic storage", "الـ lithography بيتستخدم في تصنيع الـ chips مش تخزين 3D."],
+ ["holographic storage", "الملف بيقول: Holographic storage: emerging type of 3D storage technology."],
+ ["serigraphic storage", "مش مصطلح."],
+ ["laser-graphic storage", "مش مصطلح."]
+]],
+["Some smart cards today store ___________ data such as the characteristics of a fingerprint—in the card and use that data to ensure the authenticity of the card's user before authorizing the smart card transaction.", 0, [
+ ["biometric", "الـ biometric بيانات خصائص جسم الإنسان، زي بصمة الإصبع."],
+ ["holographic", "تقنية تخزين 3D مش بيانات بصمة."],
+ ["optical", "بيتعلق بالليزر في تخزين الأقراص."],
+ ["biomagnetic", "مش مصطلح."]
+]],
+["To record data, holographic storage systems split the light from a blue laser beam into _______ beams.", 0, [
+ ["two", "الملف بيقول: Holographic storage uses two blue laser beams: Reference beam and Signal beam."],
+ ["four", "العدد غلط."],
+ ["five", "العدد غلط."],
+ ["ten", "العدد غلط."]
+]],
+["To read data, the reference beam projects the hologram containing the requested data onto a __________ that reads the entire data page at one time.", 3, [
+ ["spacer", "مش مصطلح في الموضوع."],
+ ["modulator", "مش اللي بيقرأ صفحة البيانات."],
+ ["header", "مش جهاز قراءة."],
+ ["detector", "الـ detector بيقرأ صفحة البيانات كلها مرة واحدة."]
+]],
+["A _______________ is a separate piece of hardware containing multiple high-speed hard drives.", 0, [
+ ["storage server", "الملف بيقول: Storage server: hardware device containing multiple high-speed hard drives."],
+ ["storage drive", "درايف واحد مش جهاز فيه عدة هاردات."],
+ ["storage client", "مش مصطلح."],
+ ["storage base", "مش مصطلح."]
+]],
+["Most computer tapes today are in the form of ____ tapes, as shown in the accompanying figure.", 3, [
+ ["floppy", "مش شكل الـ tape."],
+ ["flash", "الـ flash chip-based مش شريط."],
+ ["optical", "الـ optical بيستخدم ليزر على أقراص."],
+ ["cartridge", "الملف بيقول: Most tapes today are in the form of cartridge tapes."]
+]]
+];
+
+const LECS = [
+  { id: "l1", name: "Lecture 1", data: L1, note: "" },
+  { id: "l2", name: "Lecture 2", data: L2, note: "ملف الـ PDF مفيهوش إجابات لأسئلة المحاضرة دي، فالإجابات هنا محلولة من شرح المحاضرة نفسها." },
+  { id: "l3", name: "Lecture 3", data: L3, note: "" }
+];
+const LET = ["A", "B", "C", "D"];
+const ICON_OK = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="صح"><circle cx="12" cy="12" r="10.5" stroke-width="2"/><path d="M7 12.5l3.3 3.3L17 9"/></svg>';
+const ICON_BAD = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="غلط"><circle cx="12" cy="12" r="10.5" stroke-width="2"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"/></svg>';
+const MINI_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+const MINI_BAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const KEY = "intro-computing-quiz-v1";
+
+let cur = "l1";
+let answers = { l1: {}, l2: {}, l3: {} };
+let resetArmed = false;
+let resetTimer = null;
+
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+  if (saved && saved.answers) {
+    for (const id of Object.keys(answers)) answers[id] = saved.answers[id] || {};
+    if (saved.cur && answers[saved.cur]) cur = saved.cur;
+  }
+} catch (e) {}
+function persist() {
+  try { localStorage.setItem(KEY, JSON.stringify({ cur: cur, answers: answers })); } catch (e) {}
+}
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function stats(id) {
+  const lec = LECS.find(function (l) { return l.id === id; });
+  let ok = 0, bad = 0;
+  lec.data.forEach(function (q, i) {
+    const a = answers[id][i];
+    if (a === undefined) return;
+    if (a === q[1]) ok++; else bad++;
+  });
+  return { total: lec.data.length, ok: ok, bad: bad, done: ok + bad };
+}
+
+function renderTabs() {
+  document.getElementById("tabs").innerHTML = LECS.map(function (l) {
+    const s = stats(l.id);
+    return '<button class="tab" role="tab" id="tab-' + l.id + '" data-tab="' + l.id + '" aria-selected="' + (l.id === cur) + '">' +
+      '<span class="t-name">' + esc(l.name) + '</span>' +
+      '<span class="t-meta">' + s.done + ' / ' + s.total + ' · صح ' + s.ok + '</span></button>';
+  }).join("");
+}
+
+function renderPanel() {
+  const lec = LECS.find(function (l) { return l.id === cur; });
+  const s = stats(cur);
+  const pct = s.done ? Math.round((s.ok / s.done) * 100) : 0;
+  let html = '<div class="score-row"><span class="score-big">صح ' + s.ok + ' من ' + s.done + (s.done ? ' (' + pct + '%)' : '') + '</span>' +
+    '<span class="score-small">باقي ' + (s.total - s.done) + ' سؤال من ' + s.total + '</span></div>' +
+    '<div class="bar" role="img" aria-label="تقدمك"><i class="b-ok" style="width:' + (s.ok / s.total * 100) + '%"></i><i class="b-bad" style="width:' + (s.bad / s.total * 100) + '%"></i></div>';
+  if (lec.note) html += '<p class="note">' + esc(lec.note) + '</p>';
+  html += '<div class="grid">' + lec.data.map(function (q, i) {
+    const a = answers[cur][i];
+    const cls = a === undefined ? "" : (a === q[1] ? "ok" : "bad");
+    const mark = a === undefined ? "" : (a === q[1] ? MINI_OK : MINI_BAD);
+    return '<button class="chip ' + cls + '" data-jump="' + i + '" aria-label="سؤال ' + (i + 1) + '">' + (i + 1) + mark + '</button>';
+  }).join("") + '</div>';
+  html += '<button class="reset" id="reset" data-armed="' + (resetArmed ? 1 : 0) + '">' + (resetArmed ? "اضغط تاني للتأكيد، هيتمسح حل المحاضرة دي" : "ابدأ المحاضرة من الأول") + '</button>';
+  document.getElementById("panel").innerHTML = html;
+}
+
+function renderList() {
+  const lec = LECS.find(function (l) { return l.id === cur; });
+  document.getElementById("list").innerHTML = lec.data.map(function (q, i) {
+    const a = answers[cur][i];
+    const answered = a !== undefined;
+    const right = q[1];
+    let h = '<article class="card" id="q' + i + '"><div class="q-head"><span class="q-num">' + (i + 1) + '</span><p class="q-text" dir="ltr">' + esc(q[0]) + '</p></div>';
+    if (q[3]) h += '<p class="q-note">' + esc(q[3]) + '</p>';
+    h += '<div class="opts">';
+    q[2].forEach(function (o, j) {
+      let cls = "opt";
+      if (answered) {
+        cls += j === right ? " ok" : (j === a ? " bad" : "");
+        if (j === a) cls += " picked";
+      }
+      const isRight = j === right;
+      h += '<div class="opt-wrap"><button class="' + cls + '" data-q="' + i + '" data-o="' + j + '" dir="ltr"' + (answered ? " disabled" : "") + '>' +
+        '<span class="let">' + LET[j] + '</span><span class="txt">' + esc(o[0]) + '</span>' +
+        (answered && j === a ? '<span class="you" dir="rtl">إجابتك</span>' : '') +
+        (answered ? (isRight ? ICON_OK : ICON_BAD) : '') + '</button>';
+      if (answered) {
+        h += '<p class="why ' + (isRight ? "ok" : "bad") + '"><b>' + (isRight ? "ليه ده صح: " : "ليه ده غلط: ") + '</b>' + esc(o[1]) + '</p>';
+      }
+      h += '</div>';
+    });
+    h += '</div>';
+    if (answered) {
+      const good = a === right;
+      h += '<p class="verdict ' + (good ? "ok" : "bad") + '">' + (good ? MINI_OK : MINI_BAD) + (good ? "إجابتك صح" : "إجابتك غلط، الإجابة الصح هي " + LET[right]) + '</p>';
+    }
+    h += '</article>';
+    return h;
+  }).join("");
+}
+
+function renderAll() { renderTabs(); renderPanel(); renderList(); }
+
+document.addEventListener("click", function (e) {
+  const tab = e.target.closest("[data-tab]");
+  if (tab) {
+    cur = tab.getAttribute("data-tab"); resetArmed = false; persist(); renderAll();
+    window.scrollTo(0, 0);
+    return;
+  }
+  const opt = e.target.closest(".opt");
+  if (opt && !opt.disabled) {
+    const qi = Number(opt.getAttribute("data-q"));
+    const oi = Number(opt.getAttribute("data-o"));
+    if (answers[cur][qi] === undefined) {
+      answers[cur][qi] = oi; persist();
+      renderTabs(); renderPanel(); renderList();
+      const el = document.getElementById("q" + qi);
+      if (el) el.scrollIntoView({ block: "nearest" });
+    }
+    return;
+  }
+  const jump = e.target.closest("[data-jump]");
+  if (jump) {
+    const el = document.getElementById("q" + jump.getAttribute("data-jump"));
+    if (el) { el.scrollIntoView({ block: "start" }); }
+    return;
+  }
+  if (e.target.closest("#reset")) {
+    if (!resetArmed) {
+      resetArmed = true;
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(function () { resetArmed = false; renderPanel(); }, 4000);
+      renderPanel();
+    } else {
+      answers[cur] = {}; resetArmed = false; clearTimeout(resetTimer); persist(); renderAll();
+      window.scrollTo(0, 0);
+    }
+  }
+});
+renderAll();
+</script>
+
+</body></html>
